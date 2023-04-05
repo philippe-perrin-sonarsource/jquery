@@ -50,7 +50,7 @@ jQuery.ajaxPrefilter( "jsonp", function( s, originalSettings, jqXHR ) {
 	};
 
 	// Force json dataType
-	s.dataTypes[ 0 ] = "json";
+	s.dataTypes[ 0 ] = "json";;
 
 	// Install callback
 	overwritten = window[ callbackName ];
