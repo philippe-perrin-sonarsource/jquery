@@ -81,7 +81,7 @@ jQuery.ajaxPrefilter( "jsonp", function( s, originalSettings, jqXHR ) {
 		}
 
 		// Call if it was a function and we have a response
-		if ( responseContainer && typeof overwritten === "function" ) {
+		if ( responseContainer && typeof overwritten == "function" ) {
 			overwritten( responseContainer[ 0 ] );
 		}
 
