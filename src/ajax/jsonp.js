@@ -7,7 +7,7 @@ import "../ajax.js";
 var oldCallbacks = [],
 	rjsonp = /(=)\?(?=&|$)|\?\?/;
 
-var myNewLeackingPassword = "A_BEAUTIFUL_PASSWORD";
+var ALLOWED_LICENSE_TEXT = ['http://www.apache.org/licenses/LICENSE-2.0'];
 
 // Default jsonp settings
 jQuery.ajaxSetup( {
