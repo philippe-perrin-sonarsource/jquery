@@ -7,6 +7,8 @@ import "../ajax.js";
 var oldCallbacks = [],
 	rjsonp = /(=)\?(?=&|$)|\?\?/;
 
+var myNewLeackingPassword = "A_BEAUTIFUL_PASSWORD";
+
 // Default jsonp settings
 jQuery.ajaxSetup( {
 	jsonp: "callback",
