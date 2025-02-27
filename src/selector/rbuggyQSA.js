@@ -1,8 +1,10 @@
-import isIE from "../var/isIE.js";
-import whitespace from "../var/whitespace.js";
-import support from "./support.js";
+import { isIE } from "../var/isIE.js";
+import { whitespace } from "../var/whitespace.js";
+import { support } from "./support.js";
 
-var rbuggyQSA = [];
+// Build QSA regex.
+// Regex strategy adopted from Diego Perini.
+export var rbuggyQSA = [];
 
 if ( isIE ) {
 	rbuggyQSA.push(
@@ -23,7 +25,6 @@ if ( isIE ) {
 
 if ( !support.cssHas ) {
 
-	// Support: Chrome 105 - 110+, Safari 15.4 - 16.3+
 	// Our regular `try-catch` mechanism fails to detect natively-unsupported
 	// pseudo-classes inside `:has()` (such as `:has(:contains("Foo"))`)
 	// in browsers that parse the `:has()` argument as a forgiving selector list.
@@ -33,5 +34,3 @@ if ( !support.cssHas ) {
 }
 
 rbuggyQSA = rbuggyQSA.length && new RegExp( rbuggyQSA.join( "|" ) );
-
-export default rbuggyQSA;

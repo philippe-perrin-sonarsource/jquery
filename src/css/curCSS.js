@@ -1,10 +1,10 @@
-import jQuery from "../core.js";
-import isAttached from "../core/isAttached.js";
-import getStyles from "./var/getStyles.js";
-import rcustomProp from "./var/rcustomProp.js";
-import rtrim from "../var/rtrim.js";
+import { jQuery } from "../core.js";
+import { isAttached } from "../core/isAttached.js";
+import { getStyles } from "./var/getStyles.js";
+import { rcustomProp } from "./var/rcustomProp.js";
+import { rtrimCSS } from "../var/rtrimCSS.js";
 
-function curCSS( elem, name, computed ) {
+export function curCSS( elem, name, computed ) {
 	var ret,
 		isCustomProp = rcustomProp.test( name );
 
@@ -13,6 +13,10 @@ function curCSS( elem, name, computed ) {
 	// getPropertyValue is needed for `.css('--customProperty')` (gh-3144)
 	if ( computed ) {
 
+		// A fallback to direct property access is needed as `computed`, being
+		// the output of `getComputedStyle`, contains camelCased keys and
+		// `getPropertyValue` requires kebab-case ones.
+		//
 		// Support: IE <=9 - 11+
 		// IE only supports `"float"` in `getPropertyValue`; in computed styles
 		// it's only available as `"cssFloat"`. We no longer modify properties
@@ -26,10 +30,9 @@ function curCSS( elem, name, computed ) {
 
 		if ( isCustomProp && ret ) {
 
-			// Support: Firefox 105+, Chrome <=105+
+			// Support: Firefox 105 - 135+
 			// Spec requires trimming whitespace for custom properties (gh-4926).
-			// Firefox only trims leading whitespace. Chrome just collapses
-			// both leading & trailing whitespace to a single space.
+			// Firefox only trims leading whitespace.
 			//
 			// Fall back to `undefined` if empty string returned.
 			// This collapses a missing definition with property defined
@@ -37,12 +40,12 @@ function curCSS( elem, name, computed ) {
 			// allowing us to differentiate them without a performance penalty
 			// and returning `undefined` aligns with older jQuery.
 			//
-			// rtrim treats U+000D CARRIAGE RETURN and U+000C FORM FEED
+			// rtrimCSS treats U+000D CARRIAGE RETURN and U+000C FORM FEED
 			// as whitespace while CSS does not, but this is not a problem
 			// because CSS preprocessing replaces them with U+000A LINE FEED
 			// (which *is* CSS whitespace)
 			// https://www.w3.org/TR/css-syntax-3/#input-preprocessing
-			ret = ret.replace( rtrim, "$1" ) || undefined;
+			ret = ret.replace( rtrimCSS, "$1" ) || undefined;
 		}
 
 		if ( ret === "" && !isAttached( elem ) ) {
@@ -57,5 +60,3 @@ function curCSS( elem, name, computed ) {
 		ret + "" :
 		ret;
 }
-
-export default curCSS;

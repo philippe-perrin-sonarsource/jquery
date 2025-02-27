@@ -21,27 +21,25 @@
  * needs.
  */
 
-import jQuery from "./core.js";
-import document from "./var/document.js";
-import whitespace from "./var/whitespace.js";
+import { jQuery } from "./core.js";
+import { document } from "./var/document.js";
+import { whitespace } from "./var/whitespace.js";
+import { isIE } from "./var/isIE.js";
+import { rleadingCombinator } from "./selector/var/rleadingCombinator.js";
+import { rdescend } from "./selector/var/rdescend.js";
+import { rsibling } from "./selector/var/rsibling.js";
+import { matches } from "./selector/var/matches.js";
+import { testContext } from "./selector/testContext.js";
+import { filterMatchExpr } from "./selector/filterMatchExpr.js";
+import { preFilter } from "./selector/preFilter.js";
+import { tokenize } from "./selector/tokenize.js";
+import { toSelector } from "./selector/toSelector.js";
 
 // The following utils are attached directly to the jQuery object.
 import "./selector/escapeSelector.js";
 import "./selector/uniqueSort.js";
-import isIE from "./var/isIE.js";
-import booleans from "./selector/var/booleans.js";
-import rleadingCombinator from "./selector/var/rleadingCombinator.js";
-import rdescend from "./selector/var/rdescend.js";
-import rsibling from "./selector/var/rsibling.js";
-import matches from "./selector/var/matches.js";
-import testContext from "./selector/testContext.js";
-import filterMatchExpr from "./selector/filterMatchExpr.js";
-import preFilter from "./selector/preFilter.js";
-import tokenize from "./selector/tokenize.js";
-import toSelector from "./selector/toSelector.js";
 
 var matchExpr = jQuery.extend( {
-	bool: new RegExp( "^(?:" + booleans + ")$", "i" ),
 	needsContext: new RegExp( "^" + whitespace + "*[>+~]" )
 }, filterMatchExpr );
 
@@ -142,5 +140,8 @@ jQuery.extend( jQuery.find, {
 	},
 	matchesSelector: function( elem, expr ) {
 		return matches.call( elem, expr );
-	}
+	},
+	tokenize: tokenize
 } );
+
+export { jQuery, jQuery as $ };

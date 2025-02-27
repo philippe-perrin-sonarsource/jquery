@@ -1,21 +1,20 @@
-import jQuery from "./core.js";
-import isAttached from "./core/isAttached.js";
-import isIE from "./var/isIE.js";
-import push from "./var/push.js";
-import access from "./core/access.js";
-import rtagName from "./manipulation/var/rtagName.js";
-import wrapMap from "./manipulation/wrapMap.js";
-import getAll from "./manipulation/getAll.js";
-import domManip from "./manipulation/domManip.js";
-import setGlobalEval from "./manipulation/setGlobalEval.js";
-import dataPriv from "./data/var/dataPriv.js";
-import dataUser from "./data/var/dataUser.js";
-import acceptData from "./data/var/acceptData.js";
-import nodeName from "./core/nodeName.js";
+import { jQuery } from "./core.js";
+import { isAttached } from "./core/isAttached.js";
+import { isIE } from "./var/isIE.js";
+import { push } from "./var/push.js";
+import { access } from "./core/access.js";
+import { rtagName } from "./manipulation/var/rtagName.js";
+import { wrapMap } from "./manipulation/wrapMap.js";
+import { getAll } from "./manipulation/getAll.js";
+import { domManip } from "./manipulation/domManip.js";
+import { setGlobalEval } from "./manipulation/setGlobalEval.js";
+import { dataPriv } from "./data/var/dataPriv.js";
+import { dataUser } from "./data/var/dataUser.js";
+import { acceptData } from "./data/var/acceptData.js";
+import { nodeName } from "./core/nodeName.js";
 
 import "./core/init.js";
 import "./traversing.js";
-import "./selector.js";
 import "./event.js";
 
 var
@@ -36,34 +35,26 @@ function manipulationTarget( elem, content ) {
 }
 
 function cloneCopyEvent( src, dest ) {
-	var i, l, type, pdataOld, udataOld, udataCur, events;
+	var type, i, l,
+		events = dataPriv.get( src, "events" );
 
 	if ( dest.nodeType !== 1 ) {
 		return;
 	}
 
 	// 1. Copy private data: events, handlers, etc.
-	if ( dataPriv.hasData( src ) ) {
-		pdataOld = dataPriv.get( src );
-		events = pdataOld.events;
-
-		if ( events ) {
-			dataPriv.remove( dest, "handle events" );
-
-			for ( type in events ) {
-				for ( i = 0, l = events[ type ].length; i < l; i++ ) {
-					jQuery.event.add( dest, type, events[ type ][ i ] );
-				}
+	if ( events ) {
+		dataPriv.remove( dest, "handle events" );
+		for ( type in events ) {
+			for ( i = 0, l = events[ type ].length; i < l; i++ ) {
+				jQuery.event.add( dest, type, events[ type ][ i ] );
 			}
 		}
 	}
 
 	// 2. Copy user data
 	if ( dataUser.hasData( src ) ) {
-		udataOld = dataUser.access( src );
-		udataCur = jQuery.extend( {}, udataOld );
-
-		dataUser.set( dest, udataCur );
+		dataUser.set( dest, jQuery.extend( {}, dataUser.get( src ) ) );
 	}
 }
 
@@ -334,11 +325,11 @@ jQuery.each( {
 		for ( ; i <= last; i++ ) {
 			elems = i === last ? this : this.clone( true );
 			jQuery( insert[ i ] )[ original ]( elems );
-			push.apply( ret, elems.get() );
+			push.apply( ret, elems );
 		}
 
 		return this.pushStack( ret );
 	};
 } );
 
-export default jQuery;
+export { jQuery, jQuery as $ };

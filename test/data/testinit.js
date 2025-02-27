@@ -1,33 +1,25 @@
 /* eslint no-multi-str: "off" */
-
 "use strict";
 
-var FILEPATH = "/test/data/testinit.js",
-	activeScript = [].slice.call( document.getElementsByTagName( "script" ), -1 )[ 0 ],
-	parentUrl = activeScript && activeScript.src ?
-		activeScript.src.replace( /[?#].*/, "" ) + FILEPATH.replace( /[^/]+/g, ".." ) + "/" :
-		"../",
+var parentUrl = window.location.protocol + "//" + window.location.host,
 
 	// baseURL is intentionally set to "data/" instead of "".
 	// This is not just for convenience (since most files are in data/)
 	// but also to ensure that urls without prefix fail.
-	// Otherwise it's easy to write tests that pass on test/index.html
-	// but fail in Karma runner (where the baseURL is different).
-	baseURL = parentUrl + "test/data/",
+	baseURL = parentUrl + "/test/data/",
 	supportjQuery = this.jQuery,
 
-	// see RFC 2606
-	externalHost = "example.com",
-
-	// NOTE: keep it in sync with build/tasks/lib/slim-build-flags.js
-	slimBuildFlags = [
-		"-ajax",
-		"-callbacks",
-		"-deferred",
-		"-effects",
-		"-queue"
+	// NOTE: keep it in sync with build/tasks/lib/slim-exclude.js
+	excludedFromSlim = [
+		"ajax",
+		"callbacks",
+		"deferred",
+		"effects",
+		"queue"
 	];
 
+// see RFC 2606
+this.externalHost = "example.com";
 this.hasPHP = true;
 this.isLocal = window.location.protocol === "file:";
 
@@ -146,16 +138,12 @@ this.createXMLFragment = function() {
 	return frag;
 };
 
-window.fireNative = document.createEvent ?
-	function( node, type ) {
-		var event = document.createEvent( "HTMLEvents" );
+window.fireNative = function( node, type ) {
+	var event = document.createEvent( "HTMLEvents" );
 
-		event.initEvent( type, true, true );
-		node.dispatchEvent( event );
-	} :
-	function( node, type ) {
-		node.fireEvent( "on" + type, document.createEventObject() );
-	};
+	event.initEvent( type, true, true );
+	node.dispatchEvent( event );
+};
 
 /**
  * Add random number to url to stop caching
@@ -241,7 +229,7 @@ this.ajaxTest = function( title, expect, options, wrapper ) {
 				completed = true;
 				delete ajaxTest.abort;
 				assert.ok( false, "aborted " + reason );
-				jQuery.each( requests, function( i, request ) {
+				jQuery.each( requests, function( _i, request ) {
 					request.abort();
 				} );
 			}
@@ -249,7 +237,7 @@ this.ajaxTest = function( title, expect, options, wrapper ) {
 	} );
 };
 
-this.testIframe = function( title, fileName, func, wrapper ) {
+this.testIframe = function( title, fileName, func, wrapper, iframeStyles ) {
 	if ( !wrapper ) {
 		wrapper = QUnit.test;
 	}
@@ -258,6 +246,11 @@ this.testIframe = function( title, fileName, func, wrapper ) {
 			$iframe = supportjQuery( "<iframe></iframe>" )
 				.css( { position: "absolute", top: "0", left: "-600px", width: "500px" } )
 				.attr( { id: "qunit-fixture-iframe", src: url( fileName ) } );
+
+		// Add other iframe styles
+		if ( iframeStyles ) {
+			$iframe.css( iframeStyles );
+		}
 
 		// Test iframes are expected to invoke this via startIframeTest (cf. iframeTest.js)
 		window.iframeCallback = function() {
@@ -294,14 +287,9 @@ this.testIframe = function( title, fileName, func, wrapper ) {
 };
 this.iframeCallback = undefined;
 
-// Tests are always loaded async
-// except when running tests in Karma (See Gruntfile)
-if ( !window.__karma__ ) {
-	QUnit.config.autostart = false;
-}
+QUnit.config.autostart = false;
 
-// Leverage QUnit URL parsing to detect testSwarm environment and "basic" testing mode
-QUnit.isSwarm = ( QUnit.urlParams.swarmURL + "" ).indexOf( "http" ) === 0;
+// Leverage QUnit URL parsing to detect "basic" testing mode
 QUnit.basicTests = ( QUnit.urlParams.module + "" ) === "basic";
 
 // Support: IE 11+
@@ -319,16 +307,16 @@ this.includesModule = function( moduleName ) {
 
 	var excludedModulesPart, excludedModules;
 
-	// A short-cut for the slim build, e.g. "4.0.0-pre slim"
-	if ( jQuery.fn.jquery.indexOf( " slim" ) > -1 ) {
+	// A short-cut for the slim build, e.g. "4.0.0-pre+slim"
+	if ( jQuery.fn.jquery.indexOf( "+slim" ) > -1 ) {
 
 		// The module is included if it does NOT exist on the list
 		// of modules excluded in the slim build
-		return slimBuildFlags.indexOf( "-" + moduleName ) === -1;
+		return excludedFromSlim.indexOf( moduleName ) === -1;
 	}
 
-	// example version for `grunt custom:-deprecated`:
-	// "4.0.0-pre -deprecated,-deprecated/ajax-event-alias,-deprecated/event"
+	// example version for `npm run build -- -e deprecated`:
+	// "v4.0.0-pre+14dc9347 -deprecated,-deprecated/ajax-event-alias,-deprecated/event"
 	excludedModulesPart = jQuery.fn.jquery
 
 		// Take the flags out of the version string.
@@ -366,12 +354,18 @@ this.loadTests = function() {
 
 	// QUnit.config is populated from QUnit.urlParams but only at the beginning
 	// of the test run. We need to read both.
-	var esmodules = QUnit.config.esmodules || QUnit.urlParams.esmodules,
-		amd = QUnit.config.amd || QUnit.urlParams.amd;
+	var esmodules = QUnit.config.esmodules || QUnit.urlParams.esmodules;
+	var jsdom = QUnit.config.jsdom || QUnit.urlParams.jsdom;
+
+	if ( jsdom ) {
+
+		// JSDOM doesn't implement scrollTo
+		QUnit.config.scrolltop = false;
+	}
 
 	// Directly load tests that need evaluation before DOMContentLoaded.
-	if ( ( !esmodules && !amd ) || document.readyState === "loading" ) {
-		document.write( "<script src='" + parentUrl + "test/unit/ready.js'><\x2Fscript>" );
+	if ( !jsdom && ( !esmodules || document.readyState === "loading" ) ) {
+		document.write( "<script src='" + parentUrl + "/test/unit/ready.js'><\x2Fscript>" );
 	} else {
 		QUnit.module( "ready", function() {
 			QUnit.skip( "jQuery ready tests skipped in async mode", function() {} );
@@ -379,7 +373,7 @@ this.loadTests = function() {
 	}
 
 	// Get testSubproject from testrunner first
-	require( [ parentUrl + "test/data/testrunner.js" ], function() {
+	require( [ parentUrl + "/test/data/testrunner.js" ], function() {
 
 		// Says whether jQuery positional selector extensions are supported.
 		// A full selector engine is required to support them as they need to
@@ -394,6 +388,7 @@ this.loadTests = function() {
 
 		var i = 0,
 			tests = [
+
 				// A special module with basic tests, meant for not fully
 				// supported environments like jsdom. We run it everywhere,
 				// though, to make sure tests are not broken.
@@ -428,7 +423,7 @@ this.loadTests = function() {
 
 			if ( dep ) {
 				if ( !QUnit.basicTests || i === 1 ) {
-					require( [ parentUrl + "test/" + dep ], loadDep );
+					require( [ parentUrl + "/test/" + dep ], loadDep );
 
 				// When running basic tests, replace other modules with dummies to avoid overloading
 				// impaired clients.
@@ -438,26 +433,13 @@ this.loadTests = function() {
 				}
 
 			} else {
-				if ( window.__karma__ && window.__karma__.start ) {
-					window.__karma__.start();
-				} else {
-					QUnit.load();
-				}
 
 				/**
 				 * Run in noConflict mode
 				 */
 				jQuery.noConflict();
 
-				// Load the TestSwarm listener if swarmURL is in the address.
-				if ( QUnit.isSwarm ) {
-					require( [ "https://swarm.jquery.org/js/inject.js?" + ( new Date() ).getTime() ],
-					function() {
-						QUnit.start();
-					} );
-				} else {
-					QUnit.start();
-				}
+				QUnit.start();
 			}
 		} )();
 	} );

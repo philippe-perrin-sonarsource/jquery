@@ -1,17 +1,17 @@
-import arr from "./var/arr.js";
-import getProto from "./var/getProto.js";
-import slice from "./var/slice.js";
-import flat from "./var/flat.js";
-import push from "./var/push.js";
-import indexOf from "./var/indexOf.js";
-import class2type from "./var/class2type.js";
-import toString from "./var/toString.js";
-import hasOwn from "./var/hasOwn.js";
-import fnToString from "./var/fnToString.js";
-import ObjectFunctionString from "./var/ObjectFunctionString.js";
-import support from "./var/support.js";
-import isArrayLike from "./core/isArrayLike.js";
-import DOMEval from "./core/DOMEval.js";
+import { arr } from "./var/arr.js";
+import { getProto } from "./var/getProto.js";
+import { slice } from "./var/slice.js";
+import { flat } from "./var/flat.js";
+import { push } from "./var/push.js";
+import { indexOf } from "./var/indexOf.js";
+import { class2type } from "./var/class2type.js";
+import { toString } from "./var/toString.js";
+import { hasOwn } from "./var/hasOwn.js";
+import { fnToString } from "./var/fnToString.js";
+import { ObjectFunctionString } from "./var/ObjectFunctionString.js";
+import { support } from "./var/support.js";
+import { isArrayLike } from "./core/isArrayLike.js";
+import { DOMEval } from "./core/DOMEval.js";
 
 var version = "@VERSION",
 
@@ -271,9 +271,14 @@ jQuery.extend( {
 				// Do not traverse comment nodes
 				ret += jQuery.text( node );
 			}
-		} else if ( nodeType === 1 || nodeType === 9 || nodeType === 11 ) {
+		}
+		if ( nodeType === 1 || nodeType === 11 ) {
 			return elem.textContent;
-		} else if ( nodeType === 3 || nodeType === 4 ) {
+		}
+		if ( nodeType === 9 ) {
+			return elem.documentElement.textContent;
+		}
+		if ( nodeType === 3 || nodeType === 4 ) {
 			return elem.nodeValue;
 		}
 
@@ -411,4 +416,4 @@ jQuery.each( "Boolean Number String Function Array Date RegExp Object Error Symb
 		class2type[ "[object " + name + "]" ] = name.toLowerCase();
 	} );
 
-export default jQuery;
+export { jQuery, jQuery as $ };

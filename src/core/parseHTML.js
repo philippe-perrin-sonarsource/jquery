@@ -1,8 +1,7 @@
-import jQuery from "../core.js";
-import document from "../var/document.js";
-import rsingleTag from "./var/rsingleTag.js";
-import buildFragment from "../manipulation/buildFragment.js";
-import isObviousHtml from "./isObviousHtml.js";
+import { jQuery } from "../core.js";
+import { rsingleTag } from "./var/rsingleTag.js";
+import { buildFragment } from "../manipulation/buildFragment.js";
+import { isObviousHtml } from "./isObviousHtml.js";
 
 // Argument "data" should be string of html or a TrustedHTML wrapper of obvious HTML
 // context (optional): If specified, the fragment will be created in this context,
@@ -17,20 +16,14 @@ jQuery.parseHTML = function( data, context, keepScripts ) {
 		context = false;
 	}
 
-	var base, parsed, scripts;
+	var parsed, scripts;
 
 	if ( !context ) {
 
 		// Stop scripts or inline event handlers from being executed immediately
-		// by using document.implementation
-		context = document.implementation.createHTMLDocument( "" );
-
-		// Set the base href for the created document
-		// so any parsed elements with URLs
-		// are based on the document's URL (gh-2965)
-		base = context.createElement( "base" );
-		base.href = document.location.href;
-		context.head.appendChild( base );
+		// by using DOMParser
+		context = ( new window.DOMParser() )
+			.parseFromString( "", "text/html" );
 	}
 
 	parsed = rsingleTag.exec( data );

@@ -7,7 +7,7 @@ QUnit.test( "css(String|Hash)", function( assert ) {
 
 	assert.equal( jQuery( "#qunit-fixture" ).css( "display" ), "block", "Check for css property \"display\"" );
 
-	var $child, div, div2, width, height, child, prctval, checkval, old;
+	var $child, div, div2, child, prctval, checkval, old;
 
 	$child = jQuery( "#nothiddendivchild" ).css( { "width": "20%", "height": "20%" } );
 	assert.notEqual( $child.css( "width" ), "20px", "Retrieving a width percentage on the child of a hidden div returns percentage" );
@@ -36,9 +36,7 @@ QUnit.test( "css(String|Hash)", function( assert ) {
 	// handle negative numbers by setting to zero trac-11604
 	jQuery( "#nothiddendiv" ).css( { "width": 1, "height": 1 } );
 
-	width = parseFloat( jQuery( "#nothiddendiv" ).css( "width" ) );
-	height = parseFloat( jQuery( "#nothiddendiv" ).css( "height" ) );
-	jQuery( "#nothiddendiv" ).css( { "overflow":"hidden", "width": -1, "height": -1 } );
+	jQuery( "#nothiddendiv" ).css( { "overflow": "hidden", "width": -1, "height": -1 } );
 	assert.equal( parseFloat( jQuery( "#nothiddendiv" ).css( "width" ) ), 0, "Test negative width set to 0" );
 	assert.equal( parseFloat( jQuery( "#nothiddendiv" ).css( "height" ) ), 0, "Test negative height set to 0" );
 
@@ -274,8 +272,7 @@ QUnit.test( "css() non-px relative values (gh-1711)", function( assert ) {
 QUnit.test( "css() mismatched relative values with bounded styles (gh-2144)", function( assert ) {
 	assert.expect( 1 );
 
-	var right,
-		$container = jQuery( "<div></div>" )
+	var $container = jQuery( "<div></div>" )
 			.css( { position: "absolute", width: "400px", fontSize: "4px" } )
 			.appendTo( "#qunit-fixture" ),
 		$el = jQuery( "<div></div>" )
@@ -321,8 +318,7 @@ QUnit.test( "css(String, Object)", function( assert ) {
 	success = true;
 	try {
 		jQuery( "#foo" ).css( "backgroundColor", "rgba(0, 0, 0, 0.1)" );
-	}
-	catch ( e ) {
+	} catch ( e ) {
 		success = false;
 	}
 	assert.ok( success, "Setting RGBA values does not throw Error (trac-5509)" );
@@ -1203,6 +1199,7 @@ QUnit.test( "Do not append px (trac-9548, trac-12990, gh-2792)", function( asser
 
 	$div.css( "animation-iteration-count", 2 );
 	if ( $div.css( "animation-iteration-count" ) !== undefined ) {
+
 		// if $div.css( "animation-iteration-count" ) return "1",
 		// it actually return the default value of animation-iteration-count
 		assert.equal( $div.css( "animation-iteration-count" ), 2, "Do not append px to 'animation-iteration-count'" );
@@ -1278,10 +1275,10 @@ QUnit.test( "Do not append px to most properties not accepting integer values", 
 	assert.equal( $div.css( "letter-spacing" ), "2px", "Do not append px to 'letter-spacing'" );
 } );
 
-QUnit.test( "Append px to whitelisted properties", function( assert ) {
+QUnit.test( "Append px to allowlisted properties", function( assert ) {
 	var prop,
 		$div = jQuery( "<div>" ).appendTo( "#qunit-fixture" ),
-		whitelist = {
+		allowlist = {
 			margin: "marginTop",
 			marginTop: undefined,
 			marginRight: undefined,
@@ -1314,10 +1311,10 @@ QUnit.test( "Append px to whitelisted properties", function( assert ) {
 			borderLeftWidth: undefined
 		};
 
-	assert.expect( ( Object.keys( whitelist ).length ) * 2 );
+	assert.expect( ( Object.keys( allowlist ).length ) * 2 );
 
-	for ( prop in whitelist ) {
-		var propToCheck = whitelist[ prop ] || prop,
+	for ( prop in allowlist ) {
+		var propToCheck = allowlist[ prop ] || prop,
 			kebabProp = prop.replace( /[A-Z]/g, function( match ) {
 				return "-" + match.toLowerCase();
 			} ),
@@ -1381,10 +1378,55 @@ testIframe(
 	"css/cssWidthBrowserZoom.html",
 	function( assert, jQuery, window, document, widthBeforeSet, widthAfterSet ) {
 		assert.expect( 2 );
-		assert.strictEqual( widthBeforeSet, "100px", "elem.css('width') works correctly with browser zoom" );
-		assert.strictEqual( widthAfterSet, "100px", "elem.css('width', val) works correctly with browser zoom" );
+
+		// Support: Firefox 126 - 135+
+		// Newer Firefox implements CSS zoom in a way it affects
+		// those values slightly.
+		assert.ok( /^100(?:|\.0\d*)px$/.test( widthBeforeSet ), "elem.css('width') works correctly with browser zoom" );
+		assert.ok( /^100(?:|\.0\d*)px$/.test( widthAfterSet ), "elem.css('width', val) works correctly with browser zoom" );
 	}
 );
+
+( function() {
+	var supportsFractionalTrWidth,
+		epsilon = 0.1,
+		table = jQuery( "<table><tr></tr></table>" ),
+		tr = table.find( "tr" );
+
+	table
+		.appendTo( "#qunit-fixture" )
+		.css( {
+			width: "100.7px",
+			borderSpacing: 0
+		} );
+
+	supportsFractionalTrWidth = Math.abs( tr.width() - 100.7 ) < epsilon;
+
+	testIframe(
+		"Test computeStyleTests for hidden iframe",
+		"css/cssComputeStyleTests.html",
+		function( assert, jQuery, window, document, initialHeight ) {
+			assert.expect( 3 );
+
+			assert.strictEqual( initialHeight === 0 ? 20 : initialHeight, 20,
+				"hidden-frame content sizes should be zero or accurate" );
+
+			window.parent.jQuery( "#qunit-fixture-iframe" ).css( { "display": "block" } );
+			jQuery( "#test" ).width( 600 );
+			assert.strictEqual( jQuery( "#test" ).width(), 600, "width should be 600" );
+
+			if ( supportsFractionalTrWidth ) {
+				assert.ok(
+					Math.abs( jQuery( "#test-tr" ).width() - 100.7 ) < epsilon,
+					"tr width should be fractional" );
+			} else {
+				assert.strictEqual( jQuery( "#test-tr" ).width(), 101, "tr width as expected" );
+			}
+		},
+		undefined,
+		{ "display": "none" }
+	);
+} )();
 
 QUnit.testUnlessIE( "css('width') and css('height') should return fractional values for nodes in the document", function( assert ) {
 	assert.expect( 2 );
@@ -1409,13 +1451,13 @@ QUnit.testUnlessIE( "css('width') and css('height') should return fractional val
 		"css('height') should return fractional values" );
 } );
 
-QUnit.test( "certain css values of 'normal' should be convertable to a number, see trac-8627", function( assert ) {
+QUnit.test( "certain css values of 'normal' should be convertible to a number, see trac-8627", function( assert ) {
 	assert.expect( 3 );
 
 	var el = jQuery( "<div style='letter-spacing:normal;font-weight:normal;'>test</div>" ).appendTo( "#qunit-fixture" );
 
-	assert.ok( !isNaN( parseFloat( el.css( "letterSpacing" ) ) ), "css('letterSpacing') not convertable to number, see trac-8627" );
-	assert.ok( !isNaN( parseFloat( el.css( "fontWeight" ) ) ), "css('fontWeight') not convertable to number, see trac-8627" );
+	assert.ok( !isNaN( parseFloat( el.css( "letterSpacing" ) ) ), "css('letterSpacing') not convertible to number, see trac-8627" );
+	assert.ok( !isNaN( parseFloat( el.css( "fontWeight" ) ) ), "css('fontWeight') not convertible to number, see trac-8627" );
 	assert.equal( typeof el.css( "fontWeight" ), "string", ".css() returns a string" );
 } );
 
@@ -1663,7 +1705,7 @@ QUnit.test( "Do not throw on frame elements from css method (trac-15098)", funct
 ( function() {
 	var vendorPrefixes = [ "Webkit", "Moz", "ms" ];
 
-	QUnit.test( "Don't default to a cached previously used wrong prefixed name (gh-2015)", function( assert ) {
+	QUnit.test( "Don't default to a previously used wrong prefixed name (gh-2015)", function( assert ) {
 
 		// Note: this test needs a property we know is only supported in a prefixed version
 		// by at least one of our main supported browsers. This may get out of date so let's
@@ -1714,21 +1756,35 @@ QUnit.test( "Do not throw on frame elements from css method (trac-15098)", funct
 		if ( transformName ) {
 			assert.equal( elemStyle[ transformName ], transformVal, "setting properly-prefixed transform" );
 		}
-		assert.equal( elemStyle[ "undefined" ], undefined, "Nothing writes to node.style.undefined" );
-	} );
-
-	QUnit.test( "Don't detect fake set properties on a node when caching the prefixed version", function( assert ) {
-		assert.expect( 1 );
-
-		var elem = jQuery( "<div></div>" ),
-			style = elem[ 0 ].style;
-		style.MozFakeProperty = "old value";
-		elem.css( "fakeProperty", "new value" );
-
-		assert.equal( style.MozFakeProperty, "old value", "Fake prefixed property is not cached" );
+		assert.equal( elemStyle.undefined, undefined, "Nothing writes to node.style.undefined" );
 	} );
 
 } )();
+
+QUnit.test( "Don't update existing unsupported prefixed properties", function( assert ) {
+	assert.expect( 1 );
+
+	var elem = jQuery( "<div></div>" ),
+		style = elem[ 0 ].style;
+	style.MozFakeProperty = "old value";
+	elem.css( "fakeProperty", "new value" );
+
+	assert.equal( style.MozFakeProperty, "old value", "Fake prefixed property is not set" );
+} );
+
+QUnit.test( "Don't set fake prefixed properties when a regular one is missing", function( assert ) {
+	assert.expect( 5 );
+
+	var elem = jQuery( "<div></div>" ),
+		style = elem[ 0 ].style;
+	elem.css( "fakeProperty", "fake value" );
+
+	assert.strictEqual( style.fakeProperty, "fake value", "Fake unprefixed property is set" );
+	assert.strictEqual( style.webkitFakeProperty, undefined, "Fake prefixed property is not set (webkit)" );
+	assert.strictEqual( style.WebkitFakeProperty, undefined, "Fake prefixed property is not set (Webkit)" );
+	assert.strictEqual( style.MozFakeProperty, undefined, "Fake prefixed property is not set (Moz)" );
+	assert.strictEqual( style.msFakeProperty, undefined, "Fake prefixed property is not set (ms)" );
+} );
 
 // IE doesn't support CSS variables.
 QUnit.testUnlessIE( "css(--customProperty)", function( assert ) {
@@ -1756,14 +1812,9 @@ QUnit.testUnlessIE( "css(--customProperty)", function( assert ) {
 
 	var div = jQuery( "<div>" ).appendTo( "#qunit-fixture" ),
 		$elem = jQuery( "<div>" ).addClass( "test__customProperties" )
-			.appendTo( "#qunit-fixture" ),
-		webkitOrBlink = /\webkit\b/i.test( navigator.userAgent ),
-		expected = 20;
+			.appendTo( "#qunit-fixture" );
 
-	if ( webkitOrBlink ) {
-		expected -= 2;
-	}
-	assert.expect( expected );
+	assert.expect( 20 );
 
 	div.css( "--color", "blue" );
 	assert.equal( div.css( "--color" ), "blue", "Modified CSS custom property using string" );
@@ -1792,13 +1843,15 @@ QUnit.testUnlessIE( "css(--customProperty)", function( assert ) {
 	assert.equal( $elem.css( "--prop5" ), "val5", "Multiple Following whitespace trimmed" );
 	assert.equal( $elem.css( "--prop6" ), "val6", "Preceding and Following whitespace trimmed" );
 	assert.equal( $elem.css( "--prop7" ), "val7", "Multiple preceding and following whitespace trimmed" );
+	assert.equal( $elem.css( "--prop8" ), "\"val8\"", "Works with double quotes" );
 
-	// Support: Chrome <=49 - 73+, Safari <=9.1 - 12.1+
-	// Chrome treats single quotes as double ones.
-	// Safari treats double quotes as single ones.
-	if ( !webkitOrBlink ) {
-		assert.equal( $elem.css( "--prop8" ), "\"val8\"", "Works with double quotes" );
+	// Support: Safari <=9.1 - 18.1+
+	// Safari converts single quotes to double ones.
+	if ( !/\bapplewebkit\/605\.1\.15\b/i.test( navigator.userAgent ) ) {
 		assert.equal( $elem.css( "--prop9" ), "'val9'", "Works with single quotes" );
+	} else {
+		assert.equal( $elem.css( "--prop9" ).replace( /"/g, "'" ), "'val9'",
+			"Works with single quotes, but they may be changed to double ones" );
 	}
 
 	assert.equal( $elem.css( "--prop10" ), "val10", "Multiple preceding and following escaped unicode whitespace trimmed" );
@@ -1829,6 +1882,7 @@ QUnit.testUnlessIE( "Don't append px to CSS vars", function( assert ) {
 // Support: IE 11+
 // This test requires Grid to be *not supported* to work.
 if ( QUnit.isIE ) {
+
 	// Make sure explicitly provided IE vendor prefix (`-ms-`) is not converted
 	// to a non-working `Ms` prefix in JavaScript.
 	QUnit.test( "IE vendor prefixes are not mangled", function( assert ) {

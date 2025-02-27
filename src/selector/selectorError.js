@@ -1,5 +1,5 @@
-function selectorError( msg ) {
-	throw new Error( "Syntax error, unrecognized expression: " + msg );
-}
+import { jQuery } from "../core.js";
 
-export default selectorError;
+export function selectorError( msg ) {
+	jQuery.error( "Syntax error, unrecognized expression: " + msg );
+}

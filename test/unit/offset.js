@@ -4,7 +4,7 @@ if ( !includesModule( "offset" ) ) {
 	return;
 }
 
-var supportsScroll, alwaysScrollable,
+var alwaysScrollable,
 	forceScroll = supportjQuery( "<div></div>" ).css( { width: 2000, height: 2000 } ),
 	checkSupport = function( assert ) {
 
@@ -14,7 +14,6 @@ var supportsScroll, alwaysScrollable,
 		// Append forceScroll to the body instead of #qunit-fixture because the latter is hidden
 		forceScroll.appendTo( "body" );
 		window.scrollTo( 200, 200 );
-		supportsScroll = document.documentElement.scrollTop || document.body.scrollTop;
 		forceScroll.detach();
 
 		// Support: iOS <=7 - 12+
@@ -165,9 +164,9 @@ testIframe( "absolute", "offset/absolute.html", function( assert, $ ) {
 
 	// get offset tests
 	tests = [
-		{ "id": "#absolute-1",     "top":  1, "left":  1 },
-		{ "id": "#absolute-1-1",   "top":  5, "left":  5 },
-		{ "id": "#absolute-1-1-1", "top":  9, "left":  9 },
+		{ "id": "#absolute-1",     "top": 1, "left": 1 },
+		{ "id": "#absolute-1-1",   "top": 5, "left": 5 },
+		{ "id": "#absolute-1-1-1", "top": 9, "left": 9 },
 		{ "id": "#absolute-2",     "top": 20, "left": 20 }
 	];
 	jQuery.each( tests, function() {
@@ -177,9 +176,9 @@ testIframe( "absolute", "offset/absolute.html", function( assert, $ ) {
 
 	// get position
 	tests = [
-		{ "id": "#absolute-1",     "top":  0, "left":  0 },
-		{ "id": "#absolute-1-1",   "top":  1, "left":  1 },
-		{ "id": "#absolute-1-1-1", "top":  1, "left":  1 },
+		{ "id": "#absolute-1",     "top": 0, "left": 0 },
+		{ "id": "#absolute-1-1",   "top": 1, "left": 1 },
+		{ "id": "#absolute-1-1-1", "top": 1, "left": 1 },
 		{ "id": "#absolute-2",     "top": 19, "left": 19 }
 	];
 	jQuery.each( tests, function() {
@@ -199,17 +198,17 @@ testIframe( "absolute", "offset/absolute.html", function( assert, $ ) {
 		{ "id": "#absolute-2",     "top": -1, "left": -1 },
 		{ "id": "#absolute-2",     "top": 19, "left": 19 },
 		{ "id": "#absolute-1-1-1", "top": 15, "left": 15 },
-		{ "id": "#absolute-1-1-1", "top":  5, "left":  5 },
+		{ "id": "#absolute-1-1-1", "top": 5, "left": 5 },
 		{ "id": "#absolute-1-1-1", "top": -1, "left": -1 },
-		{ "id": "#absolute-1-1-1", "top":  9, "left":  9 },
+		{ "id": "#absolute-1-1-1", "top": 9, "left": 9 },
 		{ "id": "#absolute-1-1",   "top": 10, "left": 10 },
-		{ "id": "#absolute-1-1",   "top":  0, "left":  0 },
+		{ "id": "#absolute-1-1",   "top": 0, "left": 0 },
 		{ "id": "#absolute-1-1",   "top": -1, "left": -1 },
-		{ "id": "#absolute-1-1",   "top":  5, "left":  5 },
-		{ "id": "#absolute-1",     "top":  2, "left":  2 },
-		{ "id": "#absolute-1",     "top":  0, "left":  0 },
+		{ "id": "#absolute-1-1",   "top": 5, "left": 5 },
+		{ "id": "#absolute-1",     "top": 2, "left": 2 },
+		{ "id": "#absolute-1",     "top": 0, "left": 0 },
 		{ "id": "#absolute-1",     "top": -1, "left": -1 },
-		{ "id": "#absolute-1",     "top":  1, "left":  1 }
+		{ "id": "#absolute-1",     "top": 1, "left": 1 }
 	];
 	jQuery.each( tests, function() {
 		$( this.id ).offset( { "top": this.top, "left": this.left } );
@@ -228,13 +227,13 @@ testIframe( "absolute", "offset/absolute.html", function( assert, $ ) {
 
 		$( this.id )
 			.offset( { "left": this.left + 2 } )
-			.offset( { "top":  this.top  + 2 } );
+			.offset( { "top": this.top  + 2 } );
 		assert.equal( $( this.id ).offset().top,  this.top  + 2, "Setting one property at a time." );
 		assert.equal( $( this.id ).offset().left, this.left + 2, "Setting one property at a time." );
 
 		$( this.id ).offset( { "top": this.top, "left": this.left, "using": function( props ) {
 			$( this ).css( {
-				"top":  props.top  + 1,
+				"top": props.top  + 1,
 				"left": props.left + 1
 			} );
 		} } );
@@ -248,8 +247,8 @@ testIframe( "relative", "offset/relative.html", function( assert, $ ) {
 
 	// get offset
 	var tests = [
-		{ "id": "#relative-1",   "top":   7, "left":  7 },
-		{ "id": "#relative-1-1", "top":  15, "left": 15 },
+		{ "id": "#relative-1",   "top": 7, "left": 7 },
+		{ "id": "#relative-1-1", "top": 15, "left": 15 },
 		{ "id": "#relative-2",   "top": 142, "left": 27 },
 		{ "id": "#relative-2-1",   "top": 149, "left": 52 }
 	];
@@ -260,8 +259,8 @@ testIframe( "relative", "offset/relative.html", function( assert, $ ) {
 
 	// get position
 	tests = [
-		{ "id": "#relative-1",   "top":   6, "left":  6 },
-		{ "id": "#relative-1-1", "top":   5, "left":  5 },
+		{ "id": "#relative-1",   "top": 6, "left": 6 },
+		{ "id": "#relative-1-1", "top": 5, "left": 5 },
 		{ "id": "#relative-2",   "top": 141, "left": 26 },
 		{ "id": "#relative-2-1",   "top": 5, "left": 5 }
 	];
@@ -272,18 +271,18 @@ testIframe( "relative", "offset/relative.html", function( assert, $ ) {
 
 	// set offset
 	tests = [
-		{ "id": "#relative-2",   "top": 200, "left":  50 },
-		{ "id": "#relative-2",   "top": 100, "left":  10 },
-		{ "id": "#relative-2",   "top":  -5, "left":  -5 },
-		{ "id": "#relative-2",   "top": 142, "left":  27 },
+		{ "id": "#relative-2",   "top": 200, "left": 50 },
+		{ "id": "#relative-2",   "top": 100, "left": 10 },
+		{ "id": "#relative-2",   "top": -5, "left": -5 },
+		{ "id": "#relative-2",   "top": 142, "left": 27 },
 		{ "id": "#relative-1-1", "top": 100, "left": 100 },
-		{ "id": "#relative-1-1", "top":   5, "left":   5 },
-		{ "id": "#relative-1-1", "top":  -1, "left":  -1 },
-		{ "id": "#relative-1-1", "top":  15, "left":  15 },
+		{ "id": "#relative-1-1", "top": 5, "left": 5 },
+		{ "id": "#relative-1-1", "top": -1, "left": -1 },
+		{ "id": "#relative-1-1", "top": 15, "left": 15 },
 		{ "id": "#relative-1",   "top": 100, "left": 100 },
-		{ "id": "#relative-1",   "top":   0, "left":   0 },
-		{ "id": "#relative-1",   "top":  -1, "left":  -1 },
-		{ "id": "#relative-1",   "top":   7, "left":   7 }
+		{ "id": "#relative-1",   "top": 0, "left": 0 },
+		{ "id": "#relative-1",   "top": -1, "left": -1 },
+		{ "id": "#relative-1",   "top": 7, "left": 7 }
 	];
 	jQuery.each( tests, function() {
 		$( this.id ).offset( { "top": this.top, "left": this.left } );
@@ -292,7 +291,7 @@ testIframe( "relative", "offset/relative.html", function( assert, $ ) {
 
 		$( this.id ).offset( { "top": this.top, "left": this.left, "using": function( props ) {
 			$( this ).css( {
-				"top":  props.top  + 1,
+				"top": props.top  + 1,
 				"left": props.left + 1
 			} );
 		} } );
@@ -306,9 +305,9 @@ testIframe( "static", "offset/static.html", function( assert, $ ) {
 
 	// get offset
 	var tests = [
-		{ "id": "#static-1",     "top":   7, "left":  7 },
-		{ "id": "#static-1-1",   "top":  15, "left": 15 },
-		{ "id": "#static-1-1-1", "top":  23, "left": 23 },
+		{ "id": "#static-1",     "top": 7, "left": 7 },
+		{ "id": "#static-1-1",   "top": 15, "left": 15 },
+		{ "id": "#static-1-1-1", "top": 23, "left": 23 },
 		{ "id": "#static-2",     "top": 122, left: 7 }
 	];
 	jQuery.each( tests, function() {
@@ -318,9 +317,9 @@ testIframe( "static", "offset/static.html", function( assert, $ ) {
 
 	// get position
 	tests = [
-		{ "id": "#static-1",     "top":   6, "left":  6 },
-		{ "id": "#static-1-1",   "top":  14, "left": 14 },
-		{ "id": "#static-1-1-1", "top":  22, "left": 22 },
+		{ "id": "#static-1",     "top": 6, "left": 6 },
+		{ "id": "#static-1-1",   "top": 14, "left": 14 },
+		{ "id": "#static-1-1-1", "top": 22, "left": 22 },
 		{ "id": "#static-2",     "top": 121, "left": 6 }
 	];
 	jQuery.each( tests, function() {
@@ -332,20 +331,20 @@ testIframe( "static", "offset/static.html", function( assert, $ ) {
 	tests = [
 		{ "id": "#static-2",     "top": 200, "left": 200 },
 		{ "id": "#static-2",     "top": 100, "left": 100 },
-		{ "id": "#static-2",     "top":  -2, "left":  -2 },
-		{ "id": "#static-2",     "top": 121, "left":   6 },
-		{ "id": "#static-1-1-1", "top":  50, "left":  50 },
-		{ "id": "#static-1-1-1", "top":  10, "left":  10 },
-		{ "id": "#static-1-1-1", "top":  -1, "left":  -1 },
-		{ "id": "#static-1-1-1", "top":  22, "left":  22 },
-		{ "id": "#static-1-1",   "top":  25, "left":  25 },
-		{ "id": "#static-1-1",   "top":  10, "left":  10 },
-		{ "id": "#static-1-1",   "top":  -3, "left":  -3 },
-		{ "id": "#static-1-1",   "top":  14, "left":  14 },
-		{ "id": "#static-1",     "top":  30, "left":  30 },
-		{ "id": "#static-1",     "top":   2, "left":   2 },
-		{ "id": "#static-1",     "top":  -2, "left":  -2 },
-		{ "id": "#static-1",     "top":   7, "left":   7 }
+		{ "id": "#static-2",     "top": -2, "left": -2 },
+		{ "id": "#static-2",     "top": 121, "left": 6 },
+		{ "id": "#static-1-1-1", "top": 50, "left": 50 },
+		{ "id": "#static-1-1-1", "top": 10, "left": 10 },
+		{ "id": "#static-1-1-1", "top": -1, "left": -1 },
+		{ "id": "#static-1-1-1", "top": 22, "left": 22 },
+		{ "id": "#static-1-1",   "top": 25, "left": 25 },
+		{ "id": "#static-1-1",   "top": 10, "left": 10 },
+		{ "id": "#static-1-1",   "top": -3, "left": -3 },
+		{ "id": "#static-1-1",   "top": 14, "left": 14 },
+		{ "id": "#static-1",     "top": 30, "left": 30 },
+		{ "id": "#static-1",     "top": 2, "left": 2 },
+		{ "id": "#static-1",     "top": -2, "left": -2 },
+		{ "id": "#static-1",     "top": 7, "left": 7 }
 	];
 	jQuery.each( tests, function() {
 		$( this.id ).offset( { "top": this.top, "left": this.left } );
@@ -354,7 +353,7 @@ testIframe( "static", "offset/static.html", function( assert, $ ) {
 
 		$( this.id ).offset( { "top": this.top, "left": this.left, "using": function( props ) {
 			$( this ).css( {
-				"top":  props.top  + 1,
+				"top": props.top  + 1,
 				"left": props.left + 1
 			} );
 		} } );
@@ -363,7 +362,7 @@ testIframe( "static", "offset/static.html", function( assert, $ ) {
 	} );
 } );
 
-testIframe( "fixed", "offset/fixed.html", function( assert, $, window ) {
+testIframe( "fixed", "offset/fixed.html", function( assert, $ ) {
 	assert.expect( 38 );
 
 	var tests, $noTopLeft;
@@ -386,31 +385,21 @@ testIframe( "fixed", "offset/fixed.html", function( assert, $, window ) {
 	];
 
 	jQuery.each( tests, function() {
-		if ( !window.supportsScroll ) {
-			assert.ok( true, "Browser doesn't support scroll position." );
-			assert.ok( true, "Browser doesn't support scroll position." );
-			assert.ok( true, "Browser doesn't support scroll position." );
-			assert.ok( true, "Browser doesn't support scroll position." );
-			assert.ok( true, "Browser doesn't support scroll position." );
-			assert.ok( true, "Browser doesn't support scroll position." );
-
-		} else {
-			assert.equal( jQuery.isPlainObject( $( this.id ).offset() ), true, "jQuery('" + this.id + "').offset() is plain object" );
-			assert.equal( jQuery.isPlainObject( $( this.id ).position() ), true, "jQuery('" + this.id + "').position() is plain object" );
-			assert.equal( $( this.id ).offset().top,  this.offsetTop,  "jQuery('" + this.id + "').offset().top" );
-			assert.equal( $( this.id ).position().top,  this.positionTop,  "jQuery('" + this.id + "').position().top" );
-			assert.equal( $( this.id ).offset().left, this.offsetLeft, "jQuery('" + this.id + "').offset().left" );
-			assert.equal( $( this.id ).position().left,  this.positionLeft,  "jQuery('" + this.id + "').position().left" );
-		}
+		assert.equal( jQuery.isPlainObject( $( this.id ).offset() ), true, "jQuery('" + this.id + "').offset() is plain object" );
+		assert.equal( jQuery.isPlainObject( $( this.id ).position() ), true, "jQuery('" + this.id + "').position() is plain object" );
+		assert.equal( $( this.id ).offset().top,  this.offsetTop,  "jQuery('" + this.id + "').offset().top" );
+		assert.equal( $( this.id ).position().top,  this.positionTop,  "jQuery('" + this.id + "').position().top" );
+		assert.equal( $( this.id ).offset().left, this.offsetLeft, "jQuery('" + this.id + "').offset().left" );
+		assert.equal( $( this.id ).position().left,  this.positionLeft,  "jQuery('" + this.id + "').position().left" );
 	} );
 
 	tests = [
 		{ "id": "#fixed-1", "top": 100, "left": 100 },
-		{ "id": "#fixed-1", "top":   0, "left":   0 },
-		{ "id": "#fixed-1", "top":  -4, "left":  -4 },
+		{ "id": "#fixed-1", "top": 0, "left": 0 },
+		{ "id": "#fixed-1", "top": -4, "left": -4 },
 		{ "id": "#fixed-2", "top": 200, "left": 200 },
-		{ "id": "#fixed-2", "top":   0, "left":   0 },
-		{ "id": "#fixed-2", "top":  -5, "left":  -5 }
+		{ "id": "#fixed-2", "top": 0, "left": 0 },
+		{ "id": "#fixed-2", "top": -5, "left": -5 }
 	];
 
 	jQuery.each( tests, function() {
@@ -420,7 +409,7 @@ testIframe( "fixed", "offset/fixed.html", function( assert, $, window ) {
 
 		$( this.id ).offset( { "top": this.top, "left": this.left, "using": function( props ) {
 			$( this ).css( {
-				"top":  props.top  + 1,
+				"top": props.top  + 1,
 				"left": props.left + 1
 			} );
 		} } );
@@ -436,13 +425,16 @@ testIframe( "fixed", "offset/fixed.html", function( assert, $, window ) {
 } );
 
 testIframe( "table", "offset/table.html", function( assert, $ ) {
-	assert.expect( 4 );
+	assert.expect( 6 );
 
 	assert.equal( $( "#table-1" ).offset().top, 6, "jQuery('#table-1').offset().top" );
 	assert.equal( $( "#table-1" ).offset().left, 6, "jQuery('#table-1').offset().left" );
 
 	assert.equal( $( "#th-1" ).offset().top, 10, "jQuery('#th-1').offset().top" );
 	assert.equal( $( "#th-1" ).offset().left, 10, "jQuery('#th-1').offset().left" );
+
+	assert.equal( $( "#th-1" ).position().top, 10, "jQuery('#th-1').position().top" );
+	assert.equal( $( "#th-1" ).position().left, 10, "jQuery('#th-1').position().left" );
 } );
 
 testIframe( "scroll", "offset/scroll.html", function( assert, $, win ) {
@@ -473,19 +465,11 @@ testIframe( "scroll", "offset/scroll.html", function( assert, $, win ) {
 
 	win.name = "test";
 
-	if ( !window.supportsScroll ) {
-		assert.ok( true, "Browser doesn't support scroll position." );
-		assert.ok( true, "Browser doesn't support scroll position." );
+	assert.equal( $( win ).scrollTop(), 1000, "jQuery(window).scrollTop()" );
+	assert.equal( $( win ).scrollLeft(), 1000, "jQuery(window).scrollLeft()" );
 
-		assert.ok( true, "Browser doesn't support scroll position." );
-		assert.ok( true, "Browser doesn't support scroll position." );
-	} else {
-		assert.equal( $( win ).scrollTop(), 1000, "jQuery(window).scrollTop()" );
-		assert.equal( $( win ).scrollLeft(), 1000, "jQuery(window).scrollLeft()" );
-
-		assert.equal( $( win.document ).scrollTop(), 1000, "jQuery(document).scrollTop()" );
-		assert.equal( $( win.document ).scrollLeft(), 1000, "jQuery(document).scrollLeft()" );
-	}
+	assert.equal( $( win.document ).scrollTop(), 1000, "jQuery(document).scrollTop()" );
+	assert.equal( $( win.document ).scrollLeft(), 1000, "jQuery(document).scrollLeft()" );
 
 	// test jQuery using parent window/document
 	// jQuery reference here is in the iframe
@@ -516,7 +500,7 @@ testIframe( "body", "offset/body.html", function( assert, $ ) {
 QUnit.test( "chaining", function( assert ) {
 	assert.expect( 3 );
 
-	var coords = { "top":  1, "left":  1 };
+	var coords = { "top": 1, "left": 1 };
 	assert.equal( jQuery( "#absolute-1" ).offset( coords ).jquery, jQuery.fn.jquery, "offset(coords) returns jQuery object" );
 	assert.equal( jQuery( "#non-existent" ).offset( coords ).jquery, jQuery.fn.jquery, "offset(coords) with empty jQuery set returns jQuery object" );
 	assert.equal( jQuery( "#absolute-1" ).offset( undefined ).jquery, jQuery.fn.jquery, "offset(undefined) returns jQuery object (trac-5571)" );
@@ -556,17 +540,17 @@ QUnit.test( "chaining", function( assert ) {
 
 		// Initialize data about page elements
 		var expectations = {
-				"documentElement":   htmlProps( htmlPos ),
-				"body":              bodyProps( bodyPos ),
-				"relative":          divProps( "relative", "body" ),
+				"documentElement": htmlProps( htmlPos ),
+				"body": bodyProps( bodyPos ),
+				"relative": divProps( "relative", "body" ),
 				"relative-relative": divProps( "relative", "relative" ),
 				"relative-absolute": divProps( "absolute", "relative" ),
-				"absolute":          divProps( "absolute", "body" ),
+				"absolute": divProps( "absolute", "body" ),
 				"absolute-relative": divProps( "relative", "absolute" ),
 				"absolute-absolute": divProps( "absolute", "absolute" ),
-				"fixed":             divProps( "fixed" ),
-				"fixed-relative":    divProps( "relative", "fixed" ),
-				"fixed-absolute":    divProps( "absolute", "fixed" )
+				"fixed": divProps( "fixed" ),
+				"fixed-relative": divProps( "relative", "fixed" ),
+				"fixed-absolute": divProps( "absolute", "fixed" )
 			};
 
 		// Define position and offset expectations for page elements
@@ -592,6 +576,7 @@ QUnit.test( "chaining", function( assert ) {
 			//   parent is not offsetParent); offset includes parent offset+border+padding
 			// static: same as relative
 			for ( ; parent; parent = expectations[ parent.parent ] ) {
+
 				// position:fixed
 				if ( props.style === "fixed" ) {
 					break;
@@ -767,25 +752,15 @@ QUnit.test( "iframe scrollTop/Left (see gh-1945)", function( assert ) {
 
 	var ifDoc = jQuery( "#iframe" )[ 0 ].contentDocument;
 
-	// Support: iOS <=8 - 12+
-	// Mobile Safari resizes the iframe by its content meaning it's not possible to scroll
-	// the iframe but only its parent element.
-	if ( /iphone os|ipad/i.test( navigator.userAgent ) ) {
-		assert.equal( true, true, "Can't scroll iframes in this environment" );
-		assert.equal( true, true, "Can't scroll iframes in this environment" );
+	// Tests scrollTop/Left with iframes
+	jQuery( "#iframe" ).css( "width", "50px" ).css( "height", "50px" );
+	ifDoc.write( "<div style='width: 1000px; height: 1000px;'></div>" );
 
-	} else {
+	jQuery( ifDoc ).scrollTop( 200 );
+	jQuery( ifDoc ).scrollLeft( 500 );
 
-		// Tests scrollTop/Left with iframes
-		jQuery( "#iframe" ).css( "width", "50px" ).css( "height", "50px" );
-		ifDoc.write( "<div style='width: 1000px; height: 1000px;'></div>" );
-
-		jQuery( ifDoc ).scrollTop( 200 );
-		jQuery( ifDoc ).scrollLeft( 500 );
-
-		assert.equal( jQuery( ifDoc ).scrollTop(), 200, "$($('#iframe')[0].contentDocument).scrollTop()" );
-		assert.equal( jQuery( ifDoc ).scrollLeft(), 500, "$($('#iframe')[0].contentDocument).scrollLeft()" );
-	}
+	assert.equal( jQuery( ifDoc ).scrollTop(), 200, "$($('#iframe')[0].contentDocument).scrollTop()" );
+	assert.equal( jQuery( ifDoc ).scrollLeft(), 500, "$($('#iframe')[0].contentDocument).scrollLeft()" );
 } );
 
 } )();

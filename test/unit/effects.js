@@ -8,8 +8,12 @@ if ( !includesModule( "effects" ) ) {
 var fxInterval = 13,
 	oldRaf = window.requestAnimationFrame,
 	hideOptions = {
-		inline: function() { jQuery.style( this, "display", "none" ); },
-		cascade: function() { this.className = "hidden"; }
+		inline: function() {
+			jQuery.style( this, "display", "none" );
+		},
+		cascade: function() {
+			this.className = "hidden";
+		}
 	};
 
 QUnit.module( "effects", {
@@ -540,12 +544,12 @@ QUnit.test( "animate duration 0", function( assert ) {
 	assert.expect( 11 );
 
 	var $elem,
-		$elems = jQuery( [ { a:0 }, { a:0 } ] ),
+		$elems = jQuery( [ { a: 0 }, { a: 0 } ] ),
 		counter = 0;
 
 	assert.equal( jQuery.timers.length, 0, "Make sure no animation was running from another test" );
 
-	$elems.eq( 0 ).animate( { a:1 }, 0, function() {
+	$elems.eq( 0 ).animate( { a: 1 }, 0, function() {
 		assert.ok( true, "Animate a simple property." );
 		counter++;
 	} );
@@ -555,18 +559,18 @@ QUnit.test( "animate duration 0", function( assert ) {
 
 	assert.equal( counter, 1, "One synchronic animations" );
 
-	$elems.animate( { a:2 }, 0, function() {
+	$elems.animate( { a: 2 }, 0, function() {
 		assert.ok( true, "Animate a second simple property." );
 		counter++;
 	} );
 
 	assert.equal( counter, 3, "Multiple synchronic animations" );
 
-	$elems.eq( 0 ).animate( { a:3 }, 0, function() {
+	$elems.eq( 0 ).animate( { a: 3 }, 0, function() {
 		assert.ok( true, "Animate a third simple property." );
 		counter++;
 	} );
-	$elems.eq( 1 ).animate( { a:3 }, fxInterval * 20, function() {
+	$elems.eq( 1 ).animate( { a: 3 }, fxInterval * 20, function() {
 		counter++;
 
 		// Failed until [6115]
@@ -948,15 +952,33 @@ jQuery.each( {
 			num = 0;
 
 			// TODO: uncrowd this
-			if ( t_h === "show" ) { num++; }
-			if ( t_w === "show" ) { num++; }
-			if ( t_w === "hide" || t_w === "show" ) { num++; }
-			if ( t_h === "hide" || t_h === "show" ) { num++; }
-			if ( t_o === "hide" || t_o === "show" ) { num++; }
-			if ( t_w === "hide" ) { num++; }
-			if ( t_o.constructor === Number ) { num += 2; }
-			if ( t_w.constructor === Number ) { num += 2; }
-			if ( t_h.constructor === Number ) { num += 2; }
+			if ( t_h === "show" ) {
+				num++;
+			}
+			if ( t_w === "show" ) {
+				num++;
+			}
+			if ( t_w === "hide" || t_w === "show" ) {
+				num++;
+			}
+			if ( t_h === "hide" || t_h === "show" ) {
+				num++;
+			}
+			if ( t_o === "hide" || t_o === "show" ) {
+				num++;
+			}
+			if ( t_w === "hide" ) {
+				num++;
+			}
+			if ( t_o.constructor === Number ) {
+				num += 2;
+			}
+			if ( t_w.constructor === Number ) {
+				num += 2;
+			}
+			if ( t_h.constructor === Number ) {
+				num += 2;
+			}
 
 			assert.expect( num );
 
@@ -1116,17 +1138,12 @@ QUnit.test( "interrupt toggle", function( assert ) {
 
 	var longDuration = fxInterval * 200,
 		shortDuration = fxInterval * 50,
-		remaining = 0,
 		$elems = jQuery( ".chain-test" ),
 		clock = this.clock,
-		finish = function() {
-		};
+		finish = function() {};
 
 	jQuery.each( { slideToggle: "height", fadeToggle: "opacity", toggle: "width" }, function( method, prop ) {
 		var $methodElems = $elems.filter( "[id^='" + method.toLowerCase() + "']" ).each( function() {
-
-			// Don't end test until we're done with this element
-			remaining++;
 
 			// Save original property value for comparison
 			jQuery.data( this, "startVal", jQuery( this ).css( prop ) );
@@ -1691,7 +1708,7 @@ QUnit.test( "hide, fadeOut and slideUp called on element width height and width 
 QUnit.test( "hide should not leave hidden inline elements visible (trac-14848)", function( assert ) {
 	assert.expect( 2 );
 
-	var el = jQuery( "#simon1" );
+	var el = jQuery( "#john1" );
 
 	el.hide( 1, function() {
 		assert.equal( el.css( "display" ), "none", "hidden" );
@@ -2457,7 +2474,9 @@ QUnit.test( "Show/hide/toggle and display: inline", function( assert ) {
 				.hide().show( N ),
 			$el.clone().data( { call: "hide+toggle", done: "inline" } ).appendTo( fixture )
 				.hide().toggle( N )
-		], function( $clone ) { return $clone[ 0 ]; } );
+		], function( $clone ) {
+			return $clone[ 0 ];
+		} );
 
 		// Animations not allowed to complete
 		interrupted = jQuery.map( [
@@ -2465,7 +2484,9 @@ QUnit.test( "Show/hide/toggle and display: inline", function( assert ) {
 			$el.clone().data( { call: "toggle+stop" } ).appendTo( fixture ).toggle( N ),
 			$el.clone().data( { call: "hide+show+stop" } ).appendTo( fixture ).hide().show( N ),
 			$el.clone().data( { call: "hide+toggle+stop" } ).appendTo( fixture ).hide().toggle( N )
-		], function( $clone ) { return $clone[ 0 ]; } );
+		], function( $clone ) {
+			return $clone[ 0 ];
+		} );
 
 		// All elements should be inline-block during the animation
 		clock.tick( N / 2 );

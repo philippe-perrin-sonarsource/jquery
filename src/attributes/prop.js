@@ -1,8 +1,6 @@
-import jQuery from "../core.js";
-import access from "../core/access.js";
-import isIE from "../var/isIE.js";
-
-import "../selector.js";
+import { jQuery } from "../core.js";
+import { access } from "../core/access.js";
+import { isIE } from "../var/isIE.js";
 
 var rfocusable = /^(?:input|select|textarea|button)$/i,
 	rclickable = /^(?:a|area)$/i;
